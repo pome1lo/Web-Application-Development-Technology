@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>WEBD Application</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Подключение jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Подключение Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <form id="formA" class="form-inline mt-3">
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="valueX" class="sr-only">Введите значение X</label>
+            <input type="number" class="form-control" id="valueX" placeholder="Введите значение X" required>
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="valueY" class="sr-only">Введите значение Y</label>
+            <input type="number" class="form-control" id="valueY" placeholder="Введите значение Y" required>
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Вычислить сумму</button>
+    </form>
+    <p class="mt-3">Результат A: <span id="resultA">-</span></p>
+
+    <form id="formB" class="form-inline mt-3">
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="valueN" class="sr-only">Введите значение N</label>
+            <input type="number" class="form-control" id="valueN" placeholder="Введите значение N" required>
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Сгенерировать числа</button>
+    </form>
+    <p class="mt-3">Результат B: <span id="resultB">-</span></p>
+</div>
+<script>
+    // Обработчик для формы A
+    document.getElementById('formA').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const valueX = parseInt(document.getElementById('valueX').value, 10); // Преобразуем в число
+        const valueY = parseInt(document.getElementById('valueY').value, 10); // Преобразуем в число
+        const xhrA = new XMLHttpRequest();
+        xhrA.open('POST', 'http://localhost:3003/handlerA', false); // Синхронный запрос
+        xhrA.setRequestHeader('Content-Type', 'application/json'); // Устанавливаем заголовок Content-Type
+        xhrA.onload = function() {
+            if (xhrA.status === 200) {
+                document.getElementById('resultA').textContent = this.responseText;
+            } else {
+                console.error('Ошибка запроса A: ' + xhrA.statusText);
+            }
+        };
+        xhrA.send(JSON.stringify({ x: valueX, y: valueY }));
+    });
+
+    // Обработчик для формы B
+    document.getElementById('formB').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const valueN = parseInt(document.getElementById('valueN').value, 10); // Преобразуем в число
+        const xhrB = new XMLHttpRequest();
+        xhrB.open('POST', 'http://localhost:3003/handlerB', false); // Синхронный запрос
+        xhrB.setRequestHeader('Content-Type', 'application/json'); // Устанавливаем заголовок Content-Type
+        xhrB.onload = function() {
+            if (xhrB.status === 200) {
+                document.getElementById('resultB').textContent = this.responseText;
+            } else {
+                console.error('Ошибка запроса B: ' + xhrB.statusText);
+            }
+        };
+        xhrB.send(JSON.stringify({ n: valueN }));
+    });
+
+</script>
+<!-- Подключение Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

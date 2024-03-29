@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>WEB5B Application</title>
+    <!-- Подключение Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <form id="randomSeriesForm" class="form-inline mt-3">
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="valueN" class="sr-only">Введите значение N</label>
+            <input type="number" class="form-control" id="valueN" placeholder="Введите значение N" required/>
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Сгенерировать</button>
+    </form>
+    <p class="mt-3">Сгенерированный ряд чисел: <span id="randomSeriesResult">-</span></p>
+</div>
+<script>
+    document.getElementById('randomSeriesForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Получаем значение N
+        const valueN = document.getElementById('valueN').value;
+
+        // Создаем новый AJAX-запрос
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:3002/generate-random-series', true);
+
+        // Устанавливаем заголовок с значением N
+        xhr.setRequestHeader('X-Rand-N', valueN);
+
+        // Обработчик ответа сервера
+        xhr.onload = function() {
+            if (this.status === 200) {
+                // Разбираем полученный JSON-текст и отображаем результат
+                const series = JSON.parse(this.responseText);
+                document.getElementById('randomSeriesResult').textContent = series.join(', ');
+            } else {
+                // Обработка ошибок
+                console.error('Ошибка запроса: ' + this.statusText);
+            }
+        };
+
+        // Отправляем запрос
+        xhr.send();
+    });
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

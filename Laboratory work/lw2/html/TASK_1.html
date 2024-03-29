@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>WEB5A Application</title>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <form id="valuesForm" class="form-inline mt-5">
+        <div class="form-group mx-sm-3 mb-2">
+            <input type="number" class="form-control" id="valueX" placeholder="Введите значение X" required/>
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+            <input type="number" class="form-control" id="valueY" placeholder="Введите значение Y" required/>
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Вычислить</button>
+    </form>
+    <p class="mt-4">Результат: <span id="resultZ">-</span></p>
+</div>
+<script>
+    document.getElementById('valuesForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Получаем введенные значения
+        const valueX = document.getElementById('valueX').value;
+        const valueY = document.getElementById('valueY').value;
+
+        // Создаем новый запрос
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://localhost:3001/calculate', true);
+
+        // Устанавливаем заголовки
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('X-Value-x', valueX);
+        xhr.setRequestHeader('X-Value-y', valueY);
+
+        // Обработчик ответа сервера
+        xhr.onload = function() {
+            if (this.status === 200) {
+                // Распаковываем заголовок ответа и отображаем результат
+                const zValue = this.getResponseHeader('X-Value-z');
+                document.getElementById('resultZ').textContent = zValue;
+            } else {
+                // Обработка ошибок
+                console.error('Ошибка запроса: ' + this.statusText);
+            }
+        };
+
+        // Отправляем запрос
+        xhr.send();
+    });
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
